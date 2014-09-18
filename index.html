@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <script src="microPromise.js"> </script>
+    </head>
+    <body>
+        <div>
+            <div>open chrome dev tool.</div>
+
+            <div>micro promise support:</div>
+            <ul>
+                <li> then </li>
+                <li> when </li>
+                <li> return promise in then </li>
+            </ul>
+        </div>
+        <script>
+            // test for promise
+            function sayHello() {
+                var deferred = Deferred();
+
+                setTimeout(function () {
+                    deferred.resolve('hello');
+                }, 3000);
+
+                return deferred.promise();
+            }
+
+            var promise = sayHello();
+            promise.then(function () {
+                // test for return promise in then
+                var deferred = Deferred();
+                setTimeout(function () {
+                    deferred.resolve('return promise data');
+                }, 1000);
+                console.log('return promise');
+                return deferred.promise();
+            }).then(function (data) {
+                console.log('data is ' + data);
+            });
+            promise.then(function (data) {
+                // test for return value in then
+                console.log('data is ' + data);
+                return 'nonono';
+            }, function (errMsg) {
+                // test for reject
+                console.log('data errMsg is ' + errMsg);
+            })
+            .then(function (data) {
+                console.log('data3 is ' + data);
+            }, function (errMsg) {
+                // test for reject chain, errMsg won't pass through the chain
+                console.log('data3 errMsg is ' + errMsg);
+            });
+            promise.then(function (data) {
+                console.log('data2 is ' + data);
+            });
+            
+            
+            // test for when
+            function sayHello1() {
+                var deferred = Deferred();
+                setTimeout(function () {
+                    deferred.resolve('hello1');
+                }, 3000);
+                return deferred.promise();
+            }
+            function sayHello2() {
+                var deferred = Deferred();
+                setTimeout(function () {
+                    deferred.resolve('hello2');
+                }, 1000);
+                return deferred.promise();
+            }
+            when(sayHello1(), sayHello2()).then(function (data1, data2) {
+                // test for when, and return promise in then
+                console.log(data1, data2);
+                var deferred = Deferred();
+                setTimeout(function () {
+                    deferred.resolve('aaa','bbb');
+                }, 1000);
+                return deferred.promise();
+            }).then(function (data1, data2) {
+                console.log('helo', data1, data2);
+            });
+        </script>
+    </body>
+</html>
