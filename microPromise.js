@@ -34,23 +34,14 @@ var Deferred = function () {
         }
     }
 
-    function handleResolveWith() {
-        var _this = this;
-        for (var i = 0; i < successCallbacks.length; i++) {
-            var callback = successCallbacks[i];
-            setTimeout(function () {
-                callback.apply(_this, finalData);
-            }, 0);
-        }
-    }
-
     function handleReject() {
         var _this = this;
         for (var i = 0; i < failCallbacks.length; i++) {
-            var callback = failCallbacks[i];
-            setTimeout(function () {
-                callback.apply(_this, finalData);
-            }, 0);
+            (function (i) {
+                setTimeout(function () {
+                    failCallbacks[i].apply(_this, finalData);
+                }, 0);
+            })(i);
         }
     }
 
